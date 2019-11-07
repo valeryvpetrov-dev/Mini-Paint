@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import androidx.core.content.res.ResourcesCompat
 
 private const val STROKE_WIDTH = 12f
@@ -23,13 +24,19 @@ class CanvasView(context: Context) : View(context) {
 
     private val paint = Paint()
 
+    // user touch path
     private val path = Path()
 
+    // current touch coordinates
     private var motionTouchEventX = 0f
     private var motionTouchEventY = 0f
 
+    // path start coordinates
     private var currentX = 0f
     private var currentY = 0f
+
+    // distance where movement is ignored to reduce the number of redraws
+    private val touchTolerance = ViewConfiguration.get(context).scaledTouchSlop
 
     init {
         setupPaint(paint)
@@ -78,15 +85,34 @@ class CanvasView(context: Context) : View(context) {
     private fun onTouchStart() {
         path.reset()
         path.moveTo(motionTouchEventX, motionTouchEventY)
-        currentX = motionTouchEventX
-        currentY = motionTouchEventY
+
+        updateCurrentPosition()
     }
 
     private fun onTouchMove() {
-        // TODO
+        // calculate offset between path start and current touch position
+        val dx = Math.abs(motionTouchEventX - currentX)
+        val dy = Math.abs(motionTouchEventY - currentY)
+
+        if (dx >= touchTolerance || dy >= touchTolerance) { // when movement is valuable
+            // quadTo() adds a quadratic bezier from the last point,
+            // approaching control point (x1,y1), and ending at (x2,y2)
+            path.quadTo(currentX, currentY,
+                (motionTouchEventX + currentX) / 2, (motionTouchEventY + currentY) / 2)
+
+            updateCurrentPosition()
+
+            extraCanvas.drawPath(path, paint)   // draw the path in the extra bitmap to cache it
+            invalidate()    // redraw
+        }
     }
 
     private fun onTouchStop() {
         // TODO
+    }
+
+    private fun updateCurrentPosition() {
+        currentX = motionTouchEventX
+        currentY = motionTouchEventY
     }
 }
