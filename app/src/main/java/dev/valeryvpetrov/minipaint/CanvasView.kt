@@ -108,7 +108,8 @@ class CanvasView(context: Context) : View(context) {
     }
 
     private fun onTouchStop() {
-        // TODO
+        // reset the path so it doesn't get drawn again
+        path.reset()
     }
 
     private fun updateCurrentPosition() {
