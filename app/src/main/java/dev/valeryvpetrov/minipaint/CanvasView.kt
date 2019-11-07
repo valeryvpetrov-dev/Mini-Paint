@@ -24,4 +24,10 @@ class CanvasView(context: Context) : View(context) {
 
         extraCanvas.drawColor(backgroundColor)  // fill background
     }
+
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+
+        canvas.drawBitmap(extraBitmap, 0f, 0f, null)
+    }
 }
