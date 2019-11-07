@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
 
@@ -21,6 +22,9 @@ class CanvasView(context: Context) : View(context) {
 
     private val paint = Paint()
 
+    private var motionTouchEventX = 0f
+    private var motionTouchEventY = 0f
+
     init {
         setupPaint(paint)
     }
@@ -28,7 +32,8 @@ class CanvasView(context: Context) : View(context) {
     private fun setupPaint(paint: Paint) {
         paint.color = paintColor
         paint.isAntiAlias = true    // Smooths out edges of what is drawn without affecting shape
-        paint.isDither = true    // Dithering affects how colors with higher-precision than the device are down-sampled
+        paint.isDither =
+            true    // Dithering affects how colors with higher-precision than the device are down-sampled
         paint.style = Paint.Style.STROKE
         paint.strokeJoin = Paint.Join.ROUND
         paint.strokeCap = Paint.Cap.ROUND
@@ -50,5 +55,29 @@ class CanvasView(context: Context) : View(context) {
         super.onDraw(canvas)
 
         canvas.drawBitmap(extraBitmap, 0f, 0f, null)
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        motionTouchEventX = event.x
+        motionTouchEventY = event.y
+
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> onTouchStart()
+            MotionEvent.ACTION_MOVE -> onTouchMove()
+            MotionEvent.ACTION_UP -> onTouchStop()
+        }
+        return true
+    }
+
+    private fun onTouchStart() {
+        // TODO
+    }
+
+    private fun onTouchMove() {
+        // TODO
+    }
+
+    private fun onTouchStop() {
+        // TODO
     }
 }
