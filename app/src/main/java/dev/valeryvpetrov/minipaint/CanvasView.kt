@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Path
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
@@ -22,8 +23,13 @@ class CanvasView(context: Context) : View(context) {
 
     private val paint = Paint()
 
+    private val path = Path()
+
     private var motionTouchEventX = 0f
     private var motionTouchEventY = 0f
+
+    private var currentX = 0f
+    private var currentY = 0f
 
     init {
         setupPaint(paint)
@@ -70,7 +76,10 @@ class CanvasView(context: Context) : View(context) {
     }
 
     private fun onTouchStart() {
-        // TODO
+        path.reset()
+        path.moveTo(motionTouchEventX, motionTouchEventY)
+        currentX = motionTouchEventX
+        currentY = motionTouchEventY
     }
 
     private fun onTouchMove() {
